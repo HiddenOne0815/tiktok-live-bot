@@ -3,6 +3,20 @@ from datetime import datetime
 import requests
 from telegram import Bot
 
+from flask import Flask
+import threading
+
+app = Flask(__name__)
+
+@app.route("/")
+@app.route("/ping")
+def health():
+    return "ok", 200
+
+def run_flask():
+    app.run(host="0.0.0.0", port=10000)
+
+
 # ====== EINSTELLUNGEN ======
 TELEGRAM_TOKEN  = os.getenv("TELEGRAM_TOKEN", "")
 CHAT_ID         = os.getenv("CHAT_ID", "")
@@ -45,4 +59,6 @@ def main():
         time.sleep(CHECK_INTERVAL)
 
 if __name__ == "__main__":
+    threading.Thread(target=run_flask, daemon=True).start()
     main()
+
